@@ -4,24 +4,55 @@
 
 import UIKit
 
-public struct AgrumeImage: Equatable {
+enum AgrumeImage: Equatable {
+  case local(UIImage)
+  case remote(URL)
   
-  public var image: UIImage?
-  public var url: URL?
-  public var title: NSAttributedString?
-  
-  private init(image: UIImage?, url: URL?, title: NSAttributedString?) {
-    self.image = image
-    self.url = url
-    self.title = title
+  var url: URL? {
+    switch self {
+    case .local:
+      return nil
+    case .remote(let url):
+      return url
+    }
   }
   
-  public init(image: UIImage, title: NSAttributedString? = nil) {
-    self.init(image: image, url: nil, title: title)
+  var image: UIImage? {
+    switch self {
+    case .local(let image):
+      return image
+    case .remote:
+      return nil
+    }
+  }
+}
+
+enum AgrumeMedia: Equatable {
+  case image(AgrumeImage, title: NSAttributedString? = nil)
+  case video(URL, thumbnail: AgrumeImage, title: NSAttributedString? = nil)
+  
+  var title: NSAttributedString? {
+    switch self {
+    case .image(_, let title),
+        .video(_, _, let title):
+      return title
+    }
   }
   
-  public init(url: URL, title: NSAttributedString? = nil) {
-    self.init(image: nil, url: url, title: title)
+  var image: AgrumeImage {
+    switch self {
+    case .image(let agrumeImage, _):
+      return agrumeImage
+    case .video(_, let thumbnail, _):
+      return thumbnail
+    }
   }
   
+  var imageURL: URL? {
+    image.url
+  }
+  
+  var localImage: UIImage? {
+    image.image
+  }
 }

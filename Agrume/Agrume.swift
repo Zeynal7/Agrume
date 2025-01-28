@@ -14,7 +14,7 @@ public final class Agrume: UIViewController {
     case toggleOverlayVisibility
   }
 
-  private var images: [AgrumeImage]!
+  private var media: [AgrumeMedia]!
   private let startIndex: Int
   private let dismissal: Dismissal
   private let enableLiveText: Bool
@@ -201,9 +201,9 @@ public final class Agrume: UIViewController {
   ) {
     switch (images, urls) {
     case (let images?, nil):
-      self.images = images.map { AgrumeImage(image: $0) }
+      self.media = images.map { AgrumeMedia.image(.local($0), title: nil) }
     case (_, let urls?):
-      self.images = urls.map { AgrumeImage(url: $0) }
+      self.media = urls.map { AgrumeMedia.image(.remote($0), title: nil) }
     default:
       assert(dataSource != nil, "No images or URLs passed. You must provide an AgrumeDataSource in that case.")
     }
@@ -322,17 +322,13 @@ public final class Agrume: UIViewController {
   ///   - image: The replacement UIImage
   ///   - newTitle: The new title, if nil then no change
   public func updateImage(at index: Int, with image: UIImage, newTitle: NSAttributedString? = nil) {
-    assert(images.count > index)
-    let replacement = with(images[index]) {
-      $0.url = nil
-      $0.image = image
-      if let newTitle {
-        $0.title = newTitle
-      }
+    assert(media.count > index)
+    let replacement = with(media[index]) {
+      $0 = .image(.local(image), title: newTitle ?? $0.title)
     }
     
     markAsUpdatingSameCell(at: index)
-    images[index] = replacement
+    media[index] = replacement
     reload()
   }
 
@@ -342,17 +338,13 @@ public final class Agrume: UIViewController {
   ///   - url: The replacement URL
   ///   - newTitle: The new title, if nil then no change
   public func updateImage(at index: Int, with url: URL, newTitle: NSAttributedString? = nil) {
-    assert(images.count > index)
-    let replacement = with(images[index]) {
-      $0.image = nil
-      $0.url = url
-      if let newTitle {
-        $0.title = newTitle
-      }
+    assert(media.count > index)
+    let replacement = with(media[index]) {
+      $0 = .image(.remote(url), title: newTitle ?? $0.title)
     }
     
     markAsUpdatingSameCell(at: index)
-    images[index] = replacement
+    media[index] = replacement
     reload()
   }
   
@@ -521,17 +513,17 @@ public final class Agrume: UIViewController {
 extension Agrume: AgrumeDataSource {
   
   public var numberOfImages: Int {
-    images.count
+    media.count
   }
   
   public func image(forIndex index: Int, completion: @escaping (UIImage?) -> Void) {
     let downloadHandler = download ?? AgrumeServiceLocator.shared.downloadHandler
-    if let handler = downloadHandler, let url = images[index].url {
+    if let handler = downloadHandler, let url = media[index].imageURL {
       handler(url, completion)
-    } else if let url = images[index].url {
+    } else if let url = media[index].imageURL {
       downloadTask = ImageDownloader.downloadImage(url, completion: completion)
     } else {
-      completion(images[index].image)
+      completion(media[index].localImage)
     }
   }
   
