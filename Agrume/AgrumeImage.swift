@@ -4,7 +4,7 @@
 
 import UIKit
 
-enum AgrumeImage: Equatable {
+public enum AgrumeImage: Equatable {
   case local(UIImage)
   case remote(URL)
   
@@ -27,7 +27,7 @@ enum AgrumeImage: Equatable {
   }
 }
 
-enum AgrumeMedia: Equatable {
+public enum AgrumeMedia: Equatable {
   case image(AgrumeImage, title: NSAttributedString? = nil)
   case video(URL, thumbnail: AgrumeImage, title: NSAttributedString? = nil)
   

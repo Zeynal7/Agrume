@@ -188,23 +188,19 @@ public final class Agrume: UIViewController {
       enableLiveText: enableLiveText
     )
   }
-
-  private init(
-    images: [UIImage]? = nil,
-    urls: [URL]? = nil,
+  
+  public init(
+    mediaItems: [AgrumeMedia]? = nil,
     dataSource: AgrumeDataSource? = nil,
-    startIndex: Int,
-    background: Background,
-    dismissal: Dismissal,
+    startIndex: Int = 0,
+    background: Background = .colored(.black),
+    dismissal: Dismissal = .withPan(.standard),
     overlayView: AgrumeOverlayView? = nil,
     enableLiveText: Bool = false
   ) {
-    switch (images, urls) {
-    case (let images?, nil):
-      self.media = images.map { AgrumeMedia.image(.local($0), title: nil) }
-    case (_, let urls?):
-      self.media = urls.map { AgrumeMedia.image(.remote($0), title: nil) }
-    default:
+    if let mediaItems {
+      self.media = mediaItems
+    } else {
       assert(dataSource != nil, "No images or URLs passed. You must provide an AgrumeDataSource in that case.")
     }
 
@@ -220,6 +216,37 @@ public final class Agrume: UIViewController {
     
     modalPresentationStyle = .custom
     modalPresentationCapturesStatusBarAppearance = true
+  }
+
+  private convenience init(
+    images: [UIImage]? = nil,
+    urls: [URL]? = nil,
+    dataSource: AgrumeDataSource? = nil,
+    startIndex: Int,
+    background: Background,
+    dismissal: Dismissal,
+    overlayView: AgrumeOverlayView? = nil,
+    enableLiveText: Bool = false
+  ) {
+    let media: [AgrumeMedia]?
+    switch (images, urls) {
+    case (let images?, nil):
+      media = images.map { AgrumeMedia.image(.local($0), title: nil) }
+    case (_, let urls?):
+      media = urls.map { AgrumeMedia.image(.remote($0), title: nil) }
+    default:
+      media = nil
+    }
+    
+    self.init(
+      mediaItems: media,
+      dataSource: dataSource,
+      startIndex: startIndex,
+      background: background,
+      dismissal: dismissal,
+      overlayView: overlayView,
+      enableLiveText: enableLiveText
+    )
   }
 
   deinit {
@@ -559,6 +586,7 @@ extension Agrume: UICollectionViewDataSource {
       cell.image = image
       self?.spinner.alpha = 0
     }
+    cell.title = media[indexPath.item].title
     // Only allow panning if horizontal swiping fails. Horizontal swiping is only active for zoomed in images
     collectionView.panGestureRecognizer.require(toFail: cell.swipeGesture)
     cell.delegate = self

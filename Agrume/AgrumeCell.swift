@@ -35,6 +35,16 @@ final class AgrumeCell: UICollectionViewCell {
     imageView.clipsToBounds = true
     imageView.layer.allowsEdgeAntialiasing = true
   }
+  private lazy var titleLabel = with(UILabel()) { label in
+    label.textAlignment = .center
+    label.font = .preferredFont(forTextStyle: .caption1)
+    label.textColor = .black
+    label.isHidden = true
+  }
+  private lazy var titleBackgroundView = with(UIView()) { view in
+    view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+    view.isHidden = true
+  }
   private lazy var singleTapGesture = with(
     UITapGestureRecognizer(
       target: self,
@@ -73,6 +83,15 @@ final class AgrumeCell: UICollectionViewCell {
   // enables Live Text analysis & interaction
   var enableLiveText = false
   
+  var title: NSAttributedString? {
+    didSet {
+      titleLabel.attributedText = title
+      let hasTitle = title != nil
+      titleLabel.isHidden = !hasTitle
+      titleBackgroundView.isHidden = !hasTitle
+    }
+  }
+  
   var image: UIImage? {
     didSet {
       imageView.image = image
@@ -98,10 +117,27 @@ final class AgrumeCell: UICollectionViewCell {
     backgroundColor = .clear
     contentView.addSubview(scrollView)
     scrollView.addSubview(imageView)
+    scrollView.addSubview(titleBackgroundView)
+    scrollView.addSubview(titleLabel)
     setupGestureRecognizers()
     if panPhysics != nil {
       animator = UIDynamicAnimator(referenceView: scrollView)
     }
+    
+
+    titleLabel.translatesAutoresizingMaskIntoConstraints = false
+    titleBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+    
+    NSLayoutConstraint.activate([
+      titleBackgroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      titleBackgroundView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+      titleBackgroundView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+      titleBackgroundView.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -10),
+      
+      titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+      titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+      titleLabel.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+    ])
   }
 
   required init?(coder aDecoder: NSCoder) {
