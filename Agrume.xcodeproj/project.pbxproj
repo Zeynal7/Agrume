@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		510A6C252D4A335E00471BD0 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510A6C242D4A335E00471BD0 /* VideoPlayer.swift */; };
 		833C23CA23CC800800F689E2 /* AgrumePhotoLibraryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833C23C923CC800800F689E2 /* AgrumePhotoLibraryHelper.swift */; };
 		94318E541D32612D0096215A /* AgrumeServiceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94318E531D32612D0096215A /* AgrumeServiceLocator.swift */; };
 		F224A7392783301200A8F5ED /* AgrumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F224A7362783301200A8F5ED /* AgrumeView.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		510A6C242D4A335E00471BD0 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		833C23C923CC800800F689E2 /* AgrumePhotoLibraryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgrumePhotoLibraryHelper.swift; sourceTree = "<group>"; };
 		94318E531D32612D0096215A /* AgrumeServiceLocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgrumeServiceLocator.swift; sourceTree = "<group>"; };
 		F224A7362783301200A8F5ED /* AgrumeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgrumeView.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				F2A51FF11B10E00700924912 /* Supporting Files */,
 				F2609E29209F2E0200E0E93D /* UIKit+Agrume.swift */,
 				F2F24F9323BB3BBE005AA731 /* With.swift */,
+				510A6C242D4A335E00471BD0 /* VideoPlayer.swift */,
 			);
 			path = Agrume;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				510A6C252D4A335E00471BD0 /* VideoPlayer.swift in Sources */,
 				F2D9598C1B1A108800073772 /* AgrumeCell.swift in Sources */,
 				F2609E26209F06F800E0E93D /* AgrumeImage.swift in Sources */,
 				F2609E2A209F2E0200E0E93D /* UIKit+Agrume.swift in Sources */,
