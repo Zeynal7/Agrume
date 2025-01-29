@@ -19,6 +19,7 @@ public final class Agrume: UIViewController {
   private let dismissal: Dismissal
   private let enableLiveText: Bool
   
+  private var didAttemptPlayingVideo = false
   private var overlayView: AgrumeOverlayView?
   private weak var dataSource: AgrumeDataSource?
 
@@ -538,6 +539,27 @@ public final class Agrume: UIViewController {
     }
     coordinator.animate(alongsideTransition: rotationHandler, completion: rotationHandler)
     super.viewWillTransition(to: size, with: coordinator)
+  }
+  
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    playVideoForStartIndex()
+  }
+  
+  private func playVideoForStartIndex() {
+    guard
+      media.indices.contains(startIndex),
+      didAttemptPlayingVideo == false
+    else {
+      return
+    }
+    didAttemptPlayingVideo = true
+    switch media[startIndex]  {
+    case .video(let url, _, _):
+      playVideo(url: url)
+    case .image:
+      break
+    }
   }
 }
 
