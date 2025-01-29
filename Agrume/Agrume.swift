@@ -42,13 +42,10 @@ public final class Agrume: UIViewController {
   /// An optional download handler. Passed the URL that is supposed to be loaded. Call the completion with the image
   /// when the download is done.
   public var download: ((_ url: URL, _ completion: @escaping DownloadCompletion) -> Void)?
-  /// Default video player is used for playing
+  /// To play the video
   public lazy var playVideo: (URL) -> Void = { [unowned self] url in
-      VideoPlayer.playVideo(from: url, on: self, onFail: {
-          self.showFailureAlertForVideo?()
-      })
+    VideoPlayer.playVideo(from: url, on: self)
   }
-  public var showFailureAlertForVideo: (() -> Void)?
   /// Status bar style when presenting
   public var statusBarStyle: UIStatusBarStyle? {
     didSet {
