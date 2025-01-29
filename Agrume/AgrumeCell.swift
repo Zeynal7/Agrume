@@ -45,6 +45,11 @@ final class AgrumeCell: UICollectionViewCell {
     view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
     view.isHidden = true
   }
+  private lazy var playImageView = with(UIImageView()) {
+    $0.image = UIImage(systemName: "play.fill")
+    $0.tintColor = .white
+    $0.contentMode = .scaleAspectFit
+  }
   private lazy var singleTapGesture = with(
     UITapGestureRecognizer(
       target: self,
@@ -510,6 +515,21 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
     return referenceArea / actualArea
   }
 
+extension AgrumeCell {
+  func updateMediaType() {
+    playImageView.isHidden = !isVideo
+    if isVideo {
+      imageView.addSubview(playImageView)
+      playImageView.translatesAutoresizingMaskIntoConstraints = false
+
+      NSLayoutConstraint.activate([
+        playImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+        playImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+        playImageView.widthAnchor.constraint(equalToConstant: 50),
+        playImageView.heightAnchor.constraint(equalToConstant: 50)
+      ])
+    }
+  }
 }
 
 extension AgrumeCell: UIScrollViewDelegate {
