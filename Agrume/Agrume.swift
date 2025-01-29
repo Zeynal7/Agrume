@@ -14,11 +14,12 @@ public final class Agrume: UIViewController {
     case toggleOverlayVisibility
   }
 
-  private var images: [AgrumeImage]!
+  private var media: [AgrumeMedia]!
   private let startIndex: Int
   private let dismissal: Dismissal
   private let enableLiveText: Bool
   
+  private var didAttemptPlayingVideo = false
   private var overlayView: AgrumeOverlayView?
   private weak var dataSource: AgrumeDataSource?
 
@@ -41,6 +42,10 @@ public final class Agrume: UIViewController {
   /// An optional download handler. Passed the URL that is supposed to be loaded. Call the completion with the image
   /// when the download is done.
   public var download: ((_ url: URL, _ completion: @escaping DownloadCompletion) -> Void)?
+  /// To play the video
+  public lazy var playVideo: (URL) -> Void = { [unowned self] url in
+    VideoPlayer.playVideo(from: url, on: self)
+  }
   /// Status bar style when presenting
   public var statusBarStyle: UIStatusBarStyle? {
     didSet {
@@ -188,23 +193,19 @@ public final class Agrume: UIViewController {
       enableLiveText: enableLiveText
     )
   }
-
-  private init(
-    images: [UIImage]? = nil,
-    urls: [URL]? = nil,
+  
+  public init(
+    mediaItems: [AgrumeMedia]? = nil,
     dataSource: AgrumeDataSource? = nil,
-    startIndex: Int,
-    background: Background,
-    dismissal: Dismissal,
+    startIndex: Int = 0,
+    background: Background = .colored(.black),
+    dismissal: Dismissal = .withPan(.standard),
     overlayView: AgrumeOverlayView? = nil,
     enableLiveText: Bool = false
   ) {
-    switch (images, urls) {
-    case (let images?, nil):
-      self.images = images.map { AgrumeImage(image: $0) }
-    case (_, let urls?):
-      self.images = urls.map { AgrumeImage(url: $0) }
-    default:
+    if let mediaItems {
+      self.media = mediaItems
+    } else {
       assert(dataSource != nil, "No images or URLs passed. You must provide an AgrumeDataSource in that case.")
     }
 
@@ -220,6 +221,37 @@ public final class Agrume: UIViewController {
     
     modalPresentationStyle = .custom
     modalPresentationCapturesStatusBarAppearance = true
+  }
+
+  private convenience init(
+    images: [UIImage]? = nil,
+    urls: [URL]? = nil,
+    dataSource: AgrumeDataSource? = nil,
+    startIndex: Int,
+    background: Background,
+    dismissal: Dismissal,
+    overlayView: AgrumeOverlayView? = nil,
+    enableLiveText: Bool = false
+  ) {
+    let media: [AgrumeMedia]?
+    switch (images, urls) {
+    case (let images?, nil):
+      media = images.map { AgrumeMedia.image(.local($0), title: nil) }
+    case (_, let urls?):
+      media = urls.map { AgrumeMedia.image(.remote($0), title: nil) }
+    default:
+      media = nil
+    }
+    
+    self.init(
+      mediaItems: media,
+      dataSource: dataSource,
+      startIndex: startIndex,
+      background: background,
+      dismissal: dismissal,
+      overlayView: overlayView,
+      enableLiveText: enableLiveText
+    )
   }
 
   deinit {
@@ -322,17 +354,13 @@ public final class Agrume: UIViewController {
   ///   - image: The replacement UIImage
   ///   - newTitle: The new title, if nil then no change
   public func updateImage(at index: Int, with image: UIImage, newTitle: NSAttributedString? = nil) {
-    assert(images.count > index)
-    let replacement = with(images[index]) {
-      $0.url = nil
-      $0.image = image
-      if let newTitle {
-        $0.title = newTitle
-      }
+    assert(media.count > index)
+    let replacement = with(media[index]) {
+      $0 = .image(.local(image), title: newTitle ?? $0.title)
     }
     
     markAsUpdatingSameCell(at: index)
-    images[index] = replacement
+    media[index] = replacement
     reload()
   }
 
@@ -342,17 +370,13 @@ public final class Agrume: UIViewController {
   ///   - url: The replacement URL
   ///   - newTitle: The new title, if nil then no change
   public func updateImage(at index: Int, with url: URL, newTitle: NSAttributedString? = nil) {
-    assert(images.count > index)
-    let replacement = with(images[index]) {
-      $0.image = nil
-      $0.url = url
-      if let newTitle {
-        $0.title = newTitle
-      }
+    assert(media.count > index)
+    let replacement = with(media[index]) {
+      $0 = .image(.remote(url), title: newTitle ?? $0.title)
     }
     
     markAsUpdatingSameCell(at: index)
-    images[index] = replacement
+    media[index] = replacement
     reload()
   }
   
@@ -516,22 +540,43 @@ public final class Agrume: UIViewController {
     coordinator.animate(alongsideTransition: rotationHandler, completion: rotationHandler)
     super.viewWillTransition(to: size, with: coordinator)
   }
+  
+  public override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    playVideoForStartIndex()
+  }
+  
+  private func playVideoForStartIndex() {
+    guard
+      media.indices.contains(startIndex),
+      didAttemptPlayingVideo == false
+    else {
+      return
+    }
+    didAttemptPlayingVideo = true
+    switch media[startIndex]  {
+    case .video(let url, _, _):
+      playVideo(url: url)
+    case .image:
+      break
+    }
+  }
 }
 
 extension Agrume: AgrumeDataSource {
   
   public var numberOfImages: Int {
-    images.count
+    media.count
   }
   
   public func image(forIndex index: Int, completion: @escaping (UIImage?) -> Void) {
     let downloadHandler = download ?? AgrumeServiceLocator.shared.downloadHandler
-    if let handler = downloadHandler, let url = images[index].url {
+    if let handler = downloadHandler, let url = media[index].imageURL {
       handler(url, completion)
-    } else if let url = images[index].url {
+    } else if let url = media[index].imageURL {
       downloadTask = ImageDownloader.downloadImage(url, completion: completion)
     } else {
-      completion(images[index].image)
+      completion(media[index].localImage)
     }
   }
   
@@ -567,6 +612,8 @@ extension Agrume: UICollectionViewDataSource {
       cell.image = image
       self?.spinner.alpha = 0
     }
+    cell.title = media[indexPath.item].title
+    cell.videoURL = media[indexPath.item].videoURL
     // Only allow panning if horizontal swiping fails. Horizontal swiping is only active for zoomed in images
     collectionView.panGestureRecognizer.require(toFail: cell.swipeGesture)
     cell.delegate = self
@@ -608,6 +655,10 @@ extension Agrume: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 }
 
 extension Agrume: AgrumeCellDelegate {
+  func playVideo(url: URL) {
+    playVideo(url)
+  }
+  
 
   var isSingleImageMode: Bool {
     dataSource?.numberOfImages == 1

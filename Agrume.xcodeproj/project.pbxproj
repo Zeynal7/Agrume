@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		510A6C252D4A335E00471BD0 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510A6C242D4A335E00471BD0 /* VideoPlayer.swift */; };
 		833C23CA23CC800800F689E2 /* AgrumePhotoLibraryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833C23C923CC800800F689E2 /* AgrumePhotoLibraryHelper.swift */; };
 		94318E541D32612D0096215A /* AgrumeServiceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94318E531D32612D0096215A /* AgrumeServiceLocator.swift */; };
 		F224A7392783301200A8F5ED /* AgrumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F224A7362783301200A8F5ED /* AgrumeView.swift */; };
@@ -22,7 +23,6 @@
 		F2DC79D61B170C4B00818A8C /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DC79D51B170C4B00818A8C /* ImageDownloader.swift */; };
 		F2EE29AE209F31B800F281A2 /* Foundation+Agrume.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE29AD209F31B800F281A2 /* Foundation+Agrume.swift */; };
 		F2F24F9423BB3BBE005AA731 /* With.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F24F9323BB3BBE005AA731 /* With.swift */; };
-		F2FA5E7F2288602F009C0DA0 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2FA5E7E22885FFB009C0DA0 /* SwiftyGif.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,23 +33,10 @@
 			remoteGlobalIDString = F2A51FED1B10E00700924912;
 			remoteInfo = Agrume;
 		};
-		F2FA5E7B22885FFB009C0DA0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F2FA5E7622885FFB009C0DA0 /* SwiftyGif.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FA29E9321CA9340E00E579D5;
-			remoteInfo = SwiftyGifExample;
-		};
-		F2FA5E7D22885FFB009C0DA0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F2FA5E7622885FFB009C0DA0 /* SwiftyGif.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B18BAF41E289899009C125A;
-			remoteInfo = SwiftyGif;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		510A6C242D4A335E00471BD0 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		833C23C923CC800800F689E2 /* AgrumePhotoLibraryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgrumePhotoLibraryHelper.swift; sourceTree = "<group>"; };
 		94318E531D32612D0096215A /* AgrumeServiceLocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgrumeServiceLocator.swift; sourceTree = "<group>"; };
 		F224A7362783301200A8F5ED /* AgrumeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgrumeView.swift; sourceTree = "<group>"; };
@@ -68,7 +55,6 @@
 		F2DC79D51B170C4B00818A8C /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		F2EE29AD209F31B800F281A2 /* Foundation+Agrume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Agrume.swift"; sourceTree = "<group>"; };
 		F2F24F9323BB3BBE005AA731 /* With.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = With.swift; sourceTree = "<group>"; };
-		F2FA5E7622885FFB009C0DA0 /* SwiftyGif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyGif.xcodeproj; path = Frameworks/SwiftyGif/SwiftyGif.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +62,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2FA5E7F2288602F009C0DA0 /* SwiftyGif.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +86,6 @@
 		F2A51FE41B10E00700924912 = {
 			isa = PBXGroup;
 			children = (
-				F2FA5E7622885FFB009C0DA0 /* SwiftyGif.xcodeproj */,
 				F2A51FF01B10E00700924912 /* Agrume */,
 				F2A51FFD1B10E00700924912 /* AgrumeTests */,
 				F2A51FEF1B10E00700924912 /* Products */,
@@ -138,6 +122,7 @@
 				F2A51FF11B10E00700924912 /* Supporting Files */,
 				F2609E29209F2E0200E0E93D /* UIKit+Agrume.swift */,
 				F2F24F9323BB3BBE005AA731 /* With.swift */,
+				510A6C242D4A335E00471BD0 /* VideoPlayer.swift */,
 			);
 			path = Agrume;
 			sourceTree = "<group>";
@@ -164,15 +149,6 @@
 				F2A51FFF1B10E00700924912 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		F2FA5E7722885FFB009C0DA0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F2FA5E7C22885FFB009C0DA0 /* SwiftyGifExample.app */,
-				F2FA5E7E22885FFB009C0DA0 /* SwiftyGif.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,12 +234,6 @@
 			mainGroup = F2A51FE41B10E00700924912;
 			productRefGroup = F2A51FEF1B10E00700924912 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = F2FA5E7722885FFB009C0DA0 /* Products */;
-					ProjectRef = F2FA5E7622885FFB009C0DA0 /* SwiftyGif.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				F2A51FED1B10E00700924912 /* Agrume */,
@@ -271,23 +241,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		F2FA5E7C22885FFB009C0DA0 /* SwiftyGifExample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SwiftyGifExample.app;
-			remoteRef = F2FA5E7B22885FFB009C0DA0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F2FA5E7E22885FFB009C0DA0 /* SwiftyGif.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyGif.framework;
-			remoteRef = F2FA5E7D22885FFB009C0DA0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F2A51FEC1B10E00700924912 /* Resources */ = {
@@ -329,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				510A6C252D4A335E00471BD0 /* VideoPlayer.swift in Sources */,
 				F2D9598C1B1A108800073772 /* AgrumeCell.swift in Sources */,
 				F2609E26209F06F800E0E93D /* AgrumeImage.swift in Sources */,
 				F2609E2A209F2E0200E0E93D /* UIKit+Agrume.swift in Sources */,

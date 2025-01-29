@@ -2,7 +2,6 @@
 //  Copyright © 2016 Schnaub. All rights reserved.
 //
 
-import SwiftyGif
 import UIKit
 import VisionKit
 
@@ -11,6 +10,7 @@ protocol AgrumeCellDelegate: AnyObject {
   var isSingleImageMode: Bool { get }
   var presentingController: UIViewController { get }
 
+  func playVideo(url: URL)
   func dismissAfterFlick()
   func dismissAfterTap()
   func toggleOverlayVisibility()
@@ -35,6 +35,21 @@ final class AgrumeCell: UICollectionViewCell {
     imageView.contentMode = .scaleAspectFit
     imageView.clipsToBounds = true
     imageView.layer.allowsEdgeAntialiasing = true
+  }
+  private lazy var titleLabel = with(UILabel()) { label in
+    label.textAlignment = .center
+    label.font = .preferredFont(forTextStyle: .caption1)
+    label.textColor = .black
+    label.isHidden = true
+  }
+  private lazy var titleBackgroundView = with(UIView()) { view in
+    view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+    view.isHidden = true
+  }
+  private lazy var playImageView = with(UIImageView()) {
+    $0.image = UIImage(systemName: "play.fill")
+    $0.tintColor = .white
+    $0.contentMode = .scaleAspectFit
   }
   private lazy var singleTapGesture = with(
     UITapGestureRecognizer(
@@ -74,15 +89,30 @@ final class AgrumeCell: UICollectionViewCell {
   // enables Live Text analysis & interaction
   var enableLiveText = false
   
+  var videoURL: URL? {
+    didSet {
+      updateMediaType()
+    }
+  }
+  
+  private var isVideo: Bool {
+    videoURL != nil
+  }
+  
+  var title: NSAttributedString? {
+    didSet {
+      titleLabel.attributedText = title
+      let hasTitle = title != nil
+      titleLabel.isHidden = !hasTitle
+      titleBackgroundView.isHidden = !hasTitle
+    }
+  }
+  
   var image: UIImage? {
     didSet {
-      if image?.imageData != nil, let image = image {
-        imageView.setGifImage(image)
-      } else {
-        imageView.image = image
-        if #available(iOS 16, macCatalyst 17.0, *), enableLiveText, let image = image {
-          analyzeImage(image)
-        }
+      imageView.image = image
+      if #available(iOS 16, macCatalyst 17.0, *), enableLiveText, let image = image {
+        analyzeImage(image)
       }
       if !updatingImageOnSameCell {
         updateScrollViewAndImageViewForCurrentMetrics()
@@ -103,10 +133,27 @@ final class AgrumeCell: UICollectionViewCell {
     backgroundColor = .clear
     contentView.addSubview(scrollView)
     scrollView.addSubview(imageView)
+    scrollView.addSubview(titleBackgroundView)
+    scrollView.addSubview(titleLabel)
     setupGestureRecognizers()
     if panPhysics != nil {
       animator = UIDynamicAnimator(referenceView: scrollView)
     }
+    
+
+    titleLabel.translatesAutoresizingMaskIntoConstraints = false
+    titleBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+    
+    NSLayoutConstraint.activate([
+      titleBackgroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      titleBackgroundView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+      titleBackgroundView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+      titleBackgroundView.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -10),
+      
+      titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+      titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+      titleLabel.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+    ])
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -245,7 +292,16 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
   }
 
   @objc
-  private func singleTap() {
+  private func singleTap(_ sender: UITapGestureRecognizer) {
+    let location = sender.location(in: imageView)
+    guard imageView.bounds.contains(location) == false else {
+      // tapping on the image
+      if let videoURL {
+        delegate?.playVideo(url: videoURL)
+      }
+      return
+    }
+    
     switch tapBehavior {
     case .dismissIfZoomedOut:
       if notZoomed {
@@ -398,7 +454,7 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
 
   private func updateScrollViewAndImageViewForCurrentMetrics() {
     scrollView.frame = contentView.frame
-    if let image = imageView.image ?? imageView.currentImage {
+    if let image = imageView.image {
       imageView.frame = resizedFrame(forSize: image.size)
     }
     scrollView.contentSize = imageView.bounds.size
@@ -475,7 +531,23 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
     let referenceArea = contentView.bounds.height * contentView.bounds.width
     return referenceArea / actualArea
   }
+}
 
+extension AgrumeCell {
+  func updateMediaType() {
+    playImageView.isHidden = !isVideo
+    if isVideo {
+      imageView.addSubview(playImageView)
+      playImageView.translatesAutoresizingMaskIntoConstraints = false
+
+      NSLayoutConstraint.activate([
+        playImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+        playImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+        playImageView.widthAnchor.constraint(equalToConstant: 50),
+        playImageView.heightAnchor.constraint(equalToConstant: 50)
+      ])
+    }
+  }
 }
 
 extension AgrumeCell: UIScrollViewDelegate {

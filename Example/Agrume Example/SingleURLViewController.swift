@@ -9,7 +9,14 @@ final class SingleURLViewController: UIViewController {
 
   @IBAction private func openURL(_ sender: Any) {
     let agrume = Agrume(
-      url: URL(string: "https://www.dropbox.com/s/mlquw9k6ogvspox/MapleBacon.png?raw=1")!,
+      mediaItems: [
+        AgrumeMedia.image(
+          AgrumeImage.remote(URL(
+            string: "https://www.dropbox.com/s/mlquw9k6ogvspox/MapleBacon.png?raw=1"
+          )!),
+          title: .init(string: "some text")
+        )
+      ],
       background: .blurred(.regular)
     )
     let helper = makeHelper()
