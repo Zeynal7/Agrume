@@ -12,13 +12,9 @@ let package = Package(
             targets: ["Agrume"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/kirualex/SwiftyGif", .upToNextMajor(from: "5.4.0"))
-    ],
     targets: [
         .target(
             name: "Agrume",
-            dependencies: ["SwiftyGif"],
             path: "./Agrume"
         )
     ]
