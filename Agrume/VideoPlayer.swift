@@ -11,27 +11,12 @@ import AVFoundation
 import AVKit
 
 enum VideoPlayer {
-    static func playVideo(from url: URL, on viewController: UIViewController, onFail: @escaping () -> Void) {
-        let asset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: false])
-        
-        asset.loadValuesAsynchronously(forKeys: ["playable"]) {
-            DispatchQueue.main.async {
-                var error: NSError?
-                let status = asset.statusOfValue(forKey: "playable", error: &error)
-                
-                if status == .loaded {
-                    let playerItem = AVPlayerItem(asset: asset)
-                    let player = AVPlayer(playerItem: playerItem)
-                    let controller = AVPlayerViewController()
-                    controller.player = player
-                    
-                    viewController.present(controller, animated: true) {
-                        player.play()
-                    }
-                } else {
-                    onFail()
-                }
-            }
-        }
+  static func playVideo(from url: URL, on viewController: UIViewController) {
+    let player = AVPlayer(url: url)
+    let controller = AVPlayerViewController()
+    controller.player = player
+    viewController.present(controller, animated: true) {
+      player.play()
     }
+  }
 }
