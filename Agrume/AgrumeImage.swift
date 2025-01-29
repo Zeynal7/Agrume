@@ -39,6 +39,15 @@ public enum AgrumeMedia: Equatable {
     }
   }
   
+  var videoURL: URL? {
+    switch self {
+    case .image:
+      return nil
+    case .video(let url, _, _):
+      return url
+    }
+  }
+  
   var image: AgrumeImage {
     switch self {
     case .image(let agrumeImage, _):

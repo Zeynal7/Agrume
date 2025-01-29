@@ -41,6 +41,10 @@ public final class Agrume: UIViewController {
   /// An optional download handler. Passed the URL that is supposed to be loaded. Call the completion with the image
   /// when the download is done.
   public var download: ((_ url: URL, _ completion: @escaping DownloadCompletion) -> Void)?
+  /// To play the video
+  public lazy var playVideo: (URL) -> Void = { [unowned self] url in
+    VideoPlayer.playVideo(from: url, on: self)
+  }
   /// Status bar style when presenting
   public var statusBarStyle: UIStatusBarStyle? {
     didSet {
@@ -587,6 +591,7 @@ extension Agrume: UICollectionViewDataSource {
       self?.spinner.alpha = 0
     }
     cell.title = media[indexPath.item].title
+    cell.videoURL = media[indexPath.item].videoURL
     // Only allow panning if horizontal swiping fails. Horizontal swiping is only active for zoomed in images
     collectionView.panGestureRecognizer.require(toFail: cell.swipeGesture)
     cell.delegate = self
@@ -628,6 +633,10 @@ extension Agrume: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 }
 
 extension Agrume: AgrumeCellDelegate {
+  func playVideo(url: URL) {
+    playVideo(url)
+  }
+  
 
   var isSingleImageMode: Bool {
     dataSource?.numberOfImages == 1

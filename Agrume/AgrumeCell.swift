@@ -10,6 +10,7 @@ protocol AgrumeCellDelegate: AnyObject {
   var isSingleImageMode: Bool { get }
   var presentingController: UIViewController { get }
 
+  func playVideo(url: URL)
   func dismissAfterFlick()
   func dismissAfterTap()
   func toggleOverlayVisibility()
@@ -87,6 +88,16 @@ final class AgrumeCell: UICollectionViewCell {
   
   // enables Live Text analysis & interaction
   var enableLiveText = false
+  
+  var videoURL: URL? {
+    didSet {
+      updateMediaType()
+    }
+  }
+  
+  private var isVideo: Bool {
+    videoURL != nil
+  }
   
   var title: NSAttributedString? {
     didSet {
@@ -283,7 +294,13 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
   @objc
   private func singleTap(_ sender: UITapGestureRecognizer) {
     let location = sender.location(in: imageView)
-    guard imageView.bounds.contains(location) == false else { return }
+    guard imageView.bounds.contains(location) == false else {
+      // tapping on the image
+      if let videoURL {
+        delegate?.playVideo(url: videoURL)
+      }
+      return
+    }
     
     switch tapBehavior {
     case .dismissIfZoomedOut:
@@ -514,6 +531,7 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
     let referenceArea = contentView.bounds.height * contentView.bounds.width
     return referenceArea / actualArea
   }
+}
 
 extension AgrumeCell {
   func updateMediaType() {
