@@ -276,7 +276,10 @@ extension AgrumeCell: UIGestureRecognizerDelegate {
   }
 
   @objc
-  private func singleTap() {
+  private func singleTap(_ sender: UITapGestureRecognizer) {
+    let location = sender.location(in: imageView)
+    guard imageView.bounds.contains(location) == false else { return }
+    
     switch tapBehavior {
     case .dismissIfZoomedOut:
       if notZoomed {
